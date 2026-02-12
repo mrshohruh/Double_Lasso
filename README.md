@@ -33,6 +33,7 @@ From the project root:
 python3 main.py
 ```
 This runs all predefined scenario grids for each DGP (plug-in and CV penalties), runs the OLS baseline, and generates plots.
+Note: The `python3` command name can vary by device (e.g., `python` or a versioned binary). Use the Python 3 interpreter available on your system.
 
 ### Build the PDF
 From the project root:
