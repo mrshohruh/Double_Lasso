@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Shokhrukhkhon Nishonkulov">
+<meta name="author" content="Olimjon Umurzokov">
+<meta name="author" content="Damir Abdulazizov">
+
+<title>Evaluating the Confidence-Interval Performance of the Double LASSO Estimator in High-Dimensional Linear Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="article_files/libs/clipboard/clipboard.min.js"></script>
+<script src="article_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="article_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="article_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="article_files/libs/quarto-html/popper.min.js"></script>
+<script src="article_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="article_files/libs/quarto-html/anchor.min.js"></script>
+<link href="article_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="article_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="article_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="article_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="article_files/libs/bootstrap/bootstrap-4d7f0bce1131f3e5f9547cd857cfbfc8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="article.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Evaluating the Confidence-Interval Performance of the Double LASSO Estimator in High-Dimensional Linear Models</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Authors</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Shokhrukhkhon Nishonkulov </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Bonn
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Olimjon Umurzokov </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Bonn
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Damir Abdulazizov </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            University of Bonn
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Abstract</strong></p>
+<p>High-dimensional control settings have become standard in empirical economics, yet reliable inference on low-dimensional parameters remains challenging when model selection is required. This paper evaluates the finite sample confidence interval performance of the Double LASSO estimator in high-dimensional linear models. Using a comprehensive Monte Carlo design, we study coverage probability and interval length across a range of data-generating processes that vary in dimensionality, covariate correlation, signal strength, and tail behavior. The results show that Double LASSO delivers confidence intervals with coverage close to the nominal level in many empirically relevant settings, particularly when theoretically calibrated (plug-in) penalties are used. Performance improves in designs with intermediate covariate correlation and in heavy-tailed environments; in the latter case, the higher empirical coverage is primarily accompanied by <strong>longer confidence intervals</strong>, consistent with more conservative inference rather than systematically improved estimator accuracy. In contrast, classical ordinary least squares performs poorly once dimensionality approaches the sample size, producing either unreliable or uninformatively wide intervals. At the same time, we identify finite sample limitations of Double LASSO in designs with weak signals and low correlation, highlighting the ongoing importance of careful tuning and design awareness. Overall, the findings indicate that Double LASSO is a practical and robust tool for inference in modern high-dimensional applications, while also motivating further work on procedures that explicitly account for model uncertainty, hidden confounding, and dependence structures</p>
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>High-dimensional linear models have become a standard empirical framework in modern econometrics, driven by the availability of rich datasets with a large number of potential control variables relative to the sample size. While these settings offer substantial flexibility, they also introduce fundamental challenges for estimation and inference. In particular, conventional methods such as ordinary least squares break down when the number of covariates approaches or exceeds the sample size, and naive post-selection inference after variable selection is well known to produce distorted confidence intervals and misleading uncertainty statements (Leeb &amp; Pötscher, 2005; Belloni, Chernozhukov, &amp; Hansen, 2014).</p>
+<p>The Double LASSO estimator was developed precisely to address this tension between flexible model selection and valid statistical inference. By combining <span class="math inline">\(\ell_1\)</span>-penalized regression with a carefully constructed orthogonalization step, Double LASSO allows researchers to estimate low-dimensional target parameters — such as treatment effects while controlling for a potentially very large set of nuisance covariates. The key insight is that the inference can remain valid even after variable selection, provided the estimating equations satisfy a Neyman orthogonality condition that renders the target parameter locally insensitive to small selection mistakes (Belloni et al., 2014; Chernozhukov et al., 2018).</p>
+<p>Although the asymptotic theory of Double LASSO is now well established, its finite sample performance especially the behavior of confidence intervals remains an important empirical question. This issue is particularly relevent in applications with moderate sample sizes, strong correlations among covariates, or non-Gaussian data features that are common in practice. In such environments, the nominal coverage of confidence intervals and their lengths can deviate substantially from theoretical benchmarks, raising concerns about the reliability of applied inference (Chernozhukov, Chetverikov, &amp; Kato, 2017).</p>
+<p>This paper provides a systematic Monte Carlo evaluation of the confidence-interval performance of the Double LASSO estimator in high-dimensional linear models. We focus on coverage probabilities and confidence-interval lengths across a range of data generating processes, including approximately sparse Gaussian designs and heavy-tailed settings that challenge standard regularity conditions. To place the results in context, we compare Double LASSO with conventional OLS based inference whenever OLS is feasible, highlighting the trade-offs between robustness, efficiency, and inferential validity.</p>
+</section>
+<section id="literature-review" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Literature Review</h1>
+<p>In many modern econometric applications, researchers work in settings where the number of potential control variables is large relative to the sample size. In such cases, standard regression methods become unreliable. Overfitting and multicollinearity lead to unstable estimates and invalidate classical inference. Regularization methods such as the Least Absolute Shrinkage and Selection Operator (LASSO) address these issues by shrinking coefficients toward zero and selecting variables in a data-driven way. While LASSO often performs well for prediction, it is poorly suited for inference. The shrinkage it imposes biases coefficient estimates, rendering standard confidence intervals and hypothesis tests invalid. As a result, inferential questions—such as estimating treatment effects—cannot be addressed directly using naive LASSO procedures.</p>
+<p>To overcome this limitation, a growing literature develops methods that combine variable selection with valid inference. A central contribution is the double selection, or post-double-selection, approach commonly referred to as Double LASSO. Alongside this method, alternative strategies such as de-biased or de-sparsified LASSO aim to correct regularization bias and restore asymptotic normality. Despite strong theoretical guarantees, an important practical question remains: how reliable are the resulting confidence intervals in finite samples and realistic data environments?</p>
+<p>The foundational paper by Belloni, Chernozhukov, and Hansen (2014), Inference on Treatment Effects After Selection Amongst High-Dimensional Controls, formalizes the Double LASSO approach in a partially linear model with a treatment variable, an outcome, and a high-dimensional set of controls. The key identifying assumption is approximate sparsity: although many covariates are observed, only a small and unknown subset is truly relevant for confounding adjustment. The method selects controls separately in the treatment and outcome equations and estimates the treatment effect using their union. Under suitable conditions, this procedure yields uniformly valid inference and has become a standard tool for causal analysis in high-dimensional settings.</p>
+<p>A related line of research focuses on correcting LASSO bias directly. De-biased or de-sparsified LASSO modifies the original estimator to remove shrinkage bias, producing approximately normal estimators that support valid inference. These ideas extend beyond simple linear models. For example, Zhu, Yu, and Cheng (2019) develop de-biased LASSO methods for partially linear models, allowing inference on components of a high-dimensional parameter vector without imposing strong signal conditions. Compared to Double LASSO, these approaches permit broader inference but typically rely on stronger regularity assumptions.</p>
+<p>Despite these advances, an important limitation remains. Both Double LASSO and de-biased LASSO condition on a selected model and treat it as fixed. In high-dimensional settings, however, variable selection is inherently unstable. Small changes in the data can alter the selected set of controls, yet this uncertainty is not reflected in conventional confidence intervals. As a result, inference may appear precise even when the underlying selection step is fragile.</p>
+<p>Another major challenge arises from hidden confounding. In observational data, unobserved factors may influence both covariates and outcomes. When such confounders are present, even bias-corrected estimators can produce misleading confidence intervals. Guo, Ćevid, and Bühlmann (2020) address this issue by proposing the Doubly Debiased LASSO, which combines spectral transformations with bias correction to mitigate the effects of unobserved confounding. Under a dense confounding structure, they show that their estimator is asymptotically normal and supports valid inference.</p>
+<p>Overall, the literature highlights that the performance of LASSO-based inference depends sensitively on data characteristics and tuning choices. In Double LASSO, finite-sample performance may deteriorate when relevant covariates have small effects, when regressors are highly correlated, or when regularization parameters are poorly chosen. De-biased LASSO faces similar challenges in unfavorable designs or small samples. While asymptotic theory provides strong guarantees, practical reliability remains an empirical question. This motivates systematic Monte Carlo evaluations that assess coverage accuracy, interval length, and stability across controlled data-generating processes.</p>
+</section>
+<section id="model-and-monte-carlo-simulations" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Model and Monte Carlo Simulations</h1>
+<section id="the-high-dimensional-linear-model" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-high-dimensional-linear-model"><span class="header-section-number">3.1</span> The High-Dimensional Linear Model</h2>
+<p>We consider a high-dimensional linear regression framework in which the number of available covariates may be large relative to the sample size. Let <span class="math inline">\(Y_i\)</span> denote the outcome of interest, <span class="math inline">\(D_i\)</span> a scalar regressor whose effect is the primary object of inference, and <span class="math inline">\(X_i \in \mathbb{R}^p\)</span> a potentially high-dimensional vector of control variables. The data are assumed to satisfy the linear model <span class="math display">\[
+Y_i = \alpha_0 D_i + X_i^\top \beta_0 + \varepsilon_i, \quad i = 1, \ldots, n.
+\]</span> Here <span class="math inline">\(\alpha_0\)</span> is the low-dimensional target parameter, <span class="math inline">\(\beta_0 \in \mathbb{R}^p\)</span> is a high-dimensional nuisance parameter, and <span class="math inline">\(\varepsilon_i\)</span> is an unobserved error term with zero conditional mean given <span class="math inline">\((D_i, X_i)\)</span>.</p>
+<p>A central feature of this setting is that the dimension <span class="math inline">\(p\)</span> may be comparable to or exceed the sample size <span class="math inline">\(n\)</span>, making ordinary least squares infeasible or unreliable. Identification and inference therefore rely on structural assumptions about the nuisance component <span class="math inline">\(\beta_0\)</span>. Following the modern high-dimensional literature, we adopt an approximate sparsity assumption, which allows <span class="math inline">\(\beta_0\)</span> to be well approximated by a sparse vector even when it is not exactly sparse. This assumption reflects the empirical belief that, among many potential controls, only a relatively small subset plays a substantively important role in explaining variation in the outcome (Belloni, Chernozhukov, and Hansen, 2014).</p>
+<p>The regressor of interest <span class="math inline">\(D_i\)</span> is permitted to be correlated with the control variables <span class="math inline">\(X_i\)</span>, which rules out simple univariate regression and motivates the use of high-dimensional adjustment. To make this dependence explicit, we also consider the reduced-form representation The regressor of interest <span class="math inline">\(D_i\)</span> is permitted to be correlated with the control variables <span class="math inline">\(X_i\)</span>, which rules out simple univariate regression and motivates the use of high-dimensional adjustment. To make this dependence explicit, we consider the reduced-form representation <span class="math display">\[
+D_i = X_i^\top \gamma_0 + v_i, \qquad \mathbb{E}[v_i \mid X_i] = 0.
+\]</span> The parameter <span class="math inline">\(\gamma_0 \in \mathbb{R}^p\)</span> is a high-dimensional nuisance component that captures the dependence of the target regressor on the controls. This formulation highlights that valid inference on <span class="math inline">\(\alpha_0\)</span> requires controlling for the joint dependence of <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(D_i\)</span> on a large set of covariates. The parameter <span class="math inline">\(\gamma_0\)</span> plays no direct substantive role and is introduced solely to construct an orthogonal estimating equation for the parameter of interest.</p>
+<p>We allow for heteroskedasticity and do not impose Gaussianity on the error terms. These weak distributional assumptions are adopted to reflect empirically relevant settings in which covariates and disturbances may exhibit heavy-tailed behavior or other deviations from standard regularity conditions. The resulting challenge is to construct an estimator and associated confidence intervals for <span class="math inline">\(\alpha_0\)</span> that remain valid in high-dimensional settings with potentially non-Gaussian features.</p>
+</section>
+<section id="target-parameter-and-the-double-lasso-procedure" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="target-parameter-and-the-double-lasso-procedure"><span class="header-section-number">3.2</span> Target Parameter and the Double LASSO Procedure</h2>
+<p>The central object of interest in this study is the scalar parameter <span class="math inline">\(\alpha_0\)</span>. It measures the marginal effect of the regressor <span class="math inline">\(D_i\)</span> on the outcome <span class="math inline">\(Y_i\)</span>, after controlling for a potentially large set of covariates. In many empirical settings, this parameter has a clear causal or policy interpretation. The remaining coefficients play a different role. They absorb confounding variation but are not themselves of substantive interest. This creates a natural distinction between the low-dimensional target parameter and the high-dimensional nuisance components.</p>
+<p>Formally, the nuisance parameters are the vectors <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\gamma_0\)</span> from the outcome and treatment equations. Although these vectors may be high-dimensional and hard to estimate precisely, inference on <span class="math inline">\(\alpha_0\)</span> does not require classical consistency for each component. What matters is that estimation errors in <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\gamma_0\)</span> do not strongly contaminate the estimator of the target parameter. This is the key insight behind modern orthogonal and debiased procedures.</p>
+<p>We work with the partially linear model <span class="math display">\[
+Y_i = \alpha_0 D_i + X_i^\top \beta_0 + \varepsilon_i, \qquad i = 1, \ldots, n,
+\]</span> where <span class="math inline">\(D_i\)</span> is the regressor of interest and <span class="math inline">\(X_i \in \mathbb{R}^p\)</span> is a high-dimensional vector of controls. To clarify identification, it is helpful to consider the residualized representation obtained by partialling out the effect of <span class="math inline">\(X_i\)</span> from both <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(D_i\)</span>. Under standard regularity conditions, <span class="math inline">\(\alpha_0\)</span> can then be characterized as the coefficient in the population regression of the residualized outcome on the residualized treatment. The associated score function satisfies a Neyman orthogonality condition: its first-order derivative with respect to the nuisance parameters vanishes at the true values. As a consequence, small estimation errors in <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\gamma_0\)</span> affect the estimator of <span class="math inline">\(\alpha_0\)</span> only at second order.</p>
+<p>The Double LASSO estimator translates this idea into a concrete procedure. It combines <span class="math inline">\(\ell_1\)</span>-penalized regressions for variable selection with a final ordinary least squares step for estimation and inference. The method proceeds in three steps. First, we estimate a LASSO regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> and denote by <span class="math inline">\(\widehat S_Y\)</span> the set of selected controls. Second, we estimate a LASSO regression of <span class="math inline">\(D\)</span> on <span class="math inline">\(X\)</span> and denote by <span class="math inline">\(\widehat S_D\)</span> the corresponding set. Third, we form the union <span class="math inline">\(\widehat S = \widehat S_Y \cup \widehat S_D\)</span> and estimate <span class="math inline">\(\alpha_0\)</span> by ordinary least squares in the regression <span class="math display">\[
+Y_i = \alpha D_i + X_{i,\widehat S}^\top \delta + u_i,
+\]</span> using heteroskedasticity-robust (HC3) standard errors for inference on <span class="math inline">\(\alpha\)</span>.</p>
+<p>The double-selection step is essential. A covariate may be weakly related to the outcome but strongly related to the regressor of interest. If such a variable is omitted, bias can arise. By selecting variables in both equations and taking their union, the procedure reduces the risk of omitted variable bias due to imperfect model selection. In effect, the post-double-selection regression approximates the orthogonal score that would be available if the nuisance functions were known.</p>
+<p>In our simulations, we implement the original Belloni–Chernozhukov–Hansen post-double-selection approach. We do not use sample splitting or cross-fitting. All selection steps and the final OLS regression are conducted on the full sample. Under approximate sparsity and standard regularity conditions, this estimator of <span class="math inline">\(\alpha_0\)</span> is <span class="math inline">\(\sqrt{n}\)</span>-consistent and asymptotically normal, even though the nuisance parameters are high-dimensional.</p>
+<p>Finally, the performance of the procedure depends on how the regularization parameter is chosen. We consider both theoretically motivated plug-in rules and data-driven cross-validation. While both are asymptotically valid, they can lead to different variable-selection behavior in finite samples. This, in turn, affects confidence-interval coverage and length. For that reason, the simulation study compares these penalty choices directly.</p>
+</section>
+<section id="benchmark-ordinary-least-squares" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="benchmark-ordinary-least-squares"><span class="header-section-number">3.3</span> Benchmark: Ordinary Least Squares</h2>
+<p>We use ordinary least squares as a benchmark whenever it is feasible. OLS remains the standard estimator in linear models and provides a natural point of comparison, since its behavior under classical assumptions is well understood and it is still widely used in applied work. In low-dimensional settings with correctly specified models, OLS delivers unbiased estimates and valid inference when paired with heteroskedasticity-robust standard errors.</p>
+<p>In high-dimensional settings, however, OLS quickly becomes unreliable. When the number of controls is large relative to the sample size, the estimator is either ill-posed or highly unstable. Even when computation is possible, many weakly relevant regressors can inflate variance and distort confidence-interval coverage. These problems are well documented in the post-selection inference literature and motivate the use of regularization-based methods.</p>
+<p>Despite these limitations, OLS plays a useful diagnostic role in our simulations. Comparing OLS and Double LASSO in cases where both can be computed helps clarify how high dimensionality affects inference. Differences in coverage and interval length illustrate the extent to which Double LASSO improves performance through regularization and orthogonalization rather than through variance estimation alone. Throughout, OLS inference relies on heteroskedasticity-robust standard errors to ensure a fair comparison.</p>
+</section>
+<section id="monte-carlo-design" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="monte-carlo-design"><span class="header-section-number">3.4</span> Monte Carlo Design</h2>
+<p>The Monte Carlo simulations are conducted under a controlled and fully reproducible design that allows for a systematic comparison of inferential performance across estimators and data-generating processes.</p>
+<p>We fix the numerical design parameters used to generate Figures 1–6 as follows:</p>
+<ul>
+<li><strong>Target parameter:</strong> The true treatment effect is set to <span class="math inline">\(\alpha_0 = 2.0\)</span>.</li>
+<li><strong>Nominal confidence level:</strong> All confidence intervals are constructed at the <span class="math inline">\(1 - \tau = 0.95\)</span> level.</li>
+<li><strong>Monte Carlo replications:</strong> Each design scenario is replicated <span class="math inline">\(R = 500\)</span> times.</li>
+<li><strong>Correlation structure:</strong> The equicorrelation parameter is varied over the grid <span class="math inline">\(\rho \in \{0.0, 0.2, 0.5\}\)</span>.</li>
+</ul>
+<section id="simulation-grid-scenarios" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="simulation-grid-scenarios"><span class="header-section-number">3.4.1</span> Simulation grid (scenarios)</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th style="text-align: right;"><span class="math inline">\(n\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(p\)</span></th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>classical_low_dim</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">20</td>
+<td>low-dimensional check</td>
+</tr>
+<tr class="even">
+<td><code>near_p_equals_n</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">180</td>
+<td>high-dimensional</td>
+</tr>
+<tr class="odd">
+<td><code>p_equals_n</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">200</td>
+<td>high-dimensional</td>
+</tr>
+<tr class="even">
+<td><code>medium_corr_0_0</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">240</td>
+<td><span class="math inline">\(\rho=0.0\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>medium_corr_0_2</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">240</td>
+<td><span class="math inline">\(\rho=0.2\)</span></td>
+</tr>
+<tr class="even">
+<td><code>medium_corr_0_5</code></td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">240</td>
+<td><span class="math inline">\(\rho=0.5\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>large_corr_0_0</code></td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">384</td>
+<td><span class="math inline">\(\rho=0.0\)</span></td>
+</tr>
+<tr class="even">
+<td><code>large_corr_0_2</code></td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">384</td>
+<td><span class="math inline">\(\rho=0.2\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>large_corr_0_5</code></td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">384</td>
+<td><span class="math inline">\(\rho=0.5\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="covariates" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="covariates"><span class="header-section-number">3.4.2</span> Covariates</h3>
+<p>Let <span class="math inline">\(X_i \in \mathbb{R}^p\)</span> be the <span class="math inline">\(i\)</span>-th row of the covariate matrix <span class="math inline">\(X\)</span>.</p>
+<p>For Gaussian designs, <span class="math display">\[
+X_i \sim \mathcal{N}(0,\Sigma(\rho)), \qquad
+\Sigma(\rho) = (1-\rho) I_p + \rho \mathbf{1}_p\mathbf{1}_p'.
+\]</span></p>
+<p>For the heavy-tailed design, we generate multivariate Student-<span class="math inline">\(t\)</span> covariates via a Gaussian scale-mixture: <span class="math display">\[
+Z_i \sim \mathcal{N}(0,\Sigma(\rho)),\quad
+\xi_i \sim \chi^2_{\nu},\quad
+X_i = Z_i\sqrt{\nu/\xi_i},\quad \nu=3.
+\]</span></p>
+<p>We fix the number of relevant covariates to <span class="math inline">\(s = 5\)</span>; only the first <span class="math inline">\(s\)</span> coordinates of <span class="math inline">\(X_i\)</span> enter the nuisance components.</p>
+</section>
+<section id="data-generating-processes" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="data-generating-processes"><span class="header-section-number">3.4.3</span> Data Generating Processes</h3>
+<p>Our simulation study is based on a Monte Carlo design with three explicitly defined data-generating processes (DGPs). All designs share a common partially linear structure with a scalar treatment effect and a high-dimensional set of controls, but they differ in sparsity patterns, signal strength, and distributional assumptions. This structure allows us to study how confidence-interval performance evolves as the data depart from idealized conditions in a controlled and transparent way.</p>
+<p>Throughout, We consider a linear model <span class="math display">\[
+Y_i = \alpha_0 D_i + g(X_i) + \varepsilon_i,
+\qquad
+D_i = m(X_i) + v_i.
+\]</span></p>
+<p><strong>DGP 1: static (exact sparsity)</strong><br>
+The first DGP serves as a baseline high-dimensional Gaussian design with exact sparsity. Covariates are drawn from a multivariate normal distribution with an equicorrelation structure, where the correlation parameter governs dependence across regressors. Only the first <span class="math inline">\(s\)</span> covariates are relevant, and all enter the model with equal coefficients, generating a concentrated and homogeneous confounding signal: <span class="math display">\[
+g(X_i) = m(X_i) = \sum_{j=1}^{s} X_{ij}.
+\]</span> The error terms are independent and Gaussian, <span class="math display">\[
+v_i \sim \mathcal{N}(0,1),\qquad \varepsilon_i \sim \mathcal{N}(0,1),
+\]</span> and the treatment and outcome equations are given by <span class="math display">\[
+D_i = g(X_i) + v_i,\qquad
+Y_i = \alpha_0 D_i + g(X_i) + \varepsilon_i.
+\]</span> This design closely matches standard theoretical assumptions and provides a clean benchmark for evaluating estimator performance under exact sparsity.</p>
+<p><strong>DGP 2: Static–easier (approximate sparsity)</strong><br>
+The second DGP modifies the baseline design to reflect approximate rather than exact sparsity. Covariates remain Gaussian with the same equicorrelation structure, but the confounding signal is now dispersed across covariates with smoothly decaying coefficients. Specifically, for the first <span class="math inline">\(s\)</span>covariates we define: <span class="math display">\[
+\tilde b_j = j^{-2},\quad j=1,\dots,s,\qquad
+b = \sqrt{s}\,\tilde b/\lVert \tilde b\rVert_2.
+\]</span> and set <span class="math display">\[
+g(X_i) = X_{i,1:s}' b.
+\]</span> Errors: <span class="math display">\[
+v_i \sim \mathcal{N}(0,1),\qquad \varepsilon_i \sim \mathcal{N}(0,1).
+\]</span> Then with <span class="math inline">\((\gamma_D,\gamma_Y)=(1.0,0.5)\)</span> treatment and outcome equations are: <span class="math display">\[
+D_i = \gamma_D g(X_i) + v_i,\qquad
+Y_i = \alpha_0 D_i + \gamma_Y g(X_i) + \varepsilon_i.
+\]</span></p>
+<p><strong>DGP 3: Heavy-tailed (heavy-tailed covariates and errors)</strong><br>
+The third DGP departs sharply from Gaussian assumptions and introduces heavy-tailed behavior.<br>
+Covariates are generated using a multivariate Student-<span class="math inline">\(t\)</span> construction with <span class="math inline">\(\nu=3\)</span> degrees of freedom, obtained by scaling correlated Gaussian draws: <span class="math display">\[
+\varepsilon_i = s_i \xi_i,\qquad
+s_i = \sqrt{\frac{\chi^2_{\nu,i}}{\nu}},\qquad
+\xi_i \sim \mathcal{N}(0,1).
+\]</span> This preserves the same correlation structure as in the Gaussian designs while inducing heavy tails. The coefficients on the first <span class="math inline">\(s\)</span> covariates decay slowly, <span class="math display">\[
+\tilde b_j = j^{-1/2},\quad j=1,\dots,s,\qquad
+b = \sqrt{s}\,\tilde b/\lVert \tilde b\rVert_2,
+\]</span> and the signal is defined as <span class="math inline">\(g(X_i) = X_{i,1:s}' b\)</span>. Both the treatment and outcome equations include heavy-tailed noise terms: <span class="math display">\[
+v_i = t_{\nu}\sqrt{\frac{\nu-2}{\nu}},\qquad
+\varepsilon_i = t_{\nu}\sqrt{\frac{\nu-2}{\nu}},
+\]</span> with <span class="math inline">\((\gamma_D,\gamma_Y)=(1.0,0.5)\)</span>. This design generates frequent extreme observations in regressors and disturbances, reflecting empirical features of many economic and financial datasets and providing a stress test for high-dimensional inference procedures.</p>
+<p>For each data-generating process, we hold the sample size, the number of covariates, and the sparsity pattern fixed, and repeatedly draw independent samples from the same underlying model. In this way, all variation comes from repeated sampling rather than from changes in the design. This allows us to attribute differences in performance directly to the estimators and to the distributional features of the DGP, rather than to shifts in the experimental setup.</p>
+<p>Each simulation scenario is replicated a large number of times, denoted by <span class="math inline">\(R\)</span>, to obtain stable estimates of coverage probabilities and average confidence-interval lengths. Within each replication, the full estimation procedure—including variable selection, orthogonalization, and inference is re-run from scratch. This nested design mirrors the logic of repeated sampling that underpins asymptotic theory and provides a natural empirical analogue for evaluating finite-sample behavior (Davidson &amp; MacKinnon, 2004). To facilitate exact replication, all simulations are executed with fixed random seeds that are varied systematically across scenarios but held constant across estimators within a given replication.</p>
+<p>The dimensionality of the model is chosen to reflect effectively high-dimensional environments in which the number of potential controls is comparable to or exceeds the sample size. At the same time, the number of relevant covariates is kept small relative to the total dimension, consistent with approximate sparsity. Correlation among covariates is varied across scenarios to examine how multicollinearity interacts with regularization and orthogonalization in finite samples. By jointly varying these features, the design captures a range of empirically relevant trade-offs between bias, variance, and model complexity.</p>
+<p>Regularization parameters for the LASSO steps are selected using both theoretically motivated plug-in rules and data-driven cross-validation. Both choices are asymptotically valid under standard conditions, but in finite samples they can lead to different variable selection and, as a result, different inferential conclusions. Placing them side by side within the same Monte Carlo design lets us see how sensitive confidence-interval performance is to the choice of penalty. This is not a purely technical issue but a practical one, since applied researchers must make this choice in real empirical work (Belloni et al., 2014; Chernozhukov et al., 2018).</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Plug-in (theory-based) LASSO penalty">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Plug-in (theory-based) LASSO penalty
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We report the penalty on the <strong>scikit-learn</strong> scale, i.e.&nbsp;LASSO solves <span class="math display">\[
+\min_{b\in\mathbb{R}^p} \ \frac{1}{2n}\lVert y - Xb \rVert_2^2 + \alpha \lVert b \rVert_1.
+\]</span> We set <span class="math display">\[
+\alpha_{\text{plug-in}}
+= c\,\hat\sigma\sqrt{\frac{2\log\!\left(\frac{2p}{a}\right)}{n}},
+\qquad c=0.6,\ a=0.1.
+\]</span></p>
+<p>The noise level <span class="math inline">\(\hat\sigma\)</span> is estimated by <strong>one residual-based refinement</strong>: <span class="math display">\[
+\begin{aligned}
+\hat\sigma^{(0)} &amp;= \sqrt{\frac{1}{n}\sum_{i=1}^n (y_i-\bar y)^2}, \\
+\hat\sigma^{(1)} &amp;= \sqrt{\frac{1}{n}\sum_{i=1}^n \hat r_i^2}, \\
+\hat r_i &amp;= y_i - x_i^\top \hat b^{(0)}.
+\end{aligned}
+\]</span> We use <span class="math inline">\(\hat\sigma=\hat\sigma^{(1)}\)</span> in <span class="math inline">\(\alpha_{\text{plug-in}}\)</span>. This procedure is applied <strong>separately</strong> in the outcome and treatment first-stage LASSO regressions.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Cross-validated LASSO penalty (CV alpha)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Cross-validated LASSO penalty (CV alpha)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the CV version, we select the LASSO penalty by <span class="math inline">\(K\)</span>-fold cross-validation using the standard predictive criterion. We implement this procedure with <code>LassoCV</code> from scikit-learn.</p>
+<p><strong>Objective (scikit-learn scale).</strong> For each fold, LASSO solves <span class="math display">\[
+\min_{b\in\mathbb{R}^p} \ \frac{1}{2n}\lVert y - Xb \rVert_2^2 + \alpha \lVert b \rVert_1.
+\]</span></p>
+<p><strong>Cross-validation setup:</strong></p>
+<ul>
+<li><strong>Folds:</strong> <span class="math inline">\(K=10\)</span>.</li>
+<li><strong>Scoring:</strong> mean squared error (MSE) on the validation fold.</li>
+<li><strong>Selection rule:</strong> minimum-MSE rule (no one-standard-error rule).</li>
+<li><strong>Model class:</strong> LASSO (elastic net parameter fixed at <span class="math inline">\(l_1\)</span> ratio <span class="math inline">\(=1\)</span>).</li>
+<li><strong>Standardization:</strong> covariates are standardized within the estimator (default scikit-learn behavior).</li>
+<li><strong>Implementation:</strong> CV is run <strong>separately</strong> for the outcome regression <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> and for the treatment regression <span class="math inline">\(D\)</span> on <span class="math inline">\(X\)</span>, producing potentially different penalties <span class="math inline">\(\hat\alpha_Y\)</span> and <span class="math inline">\(\hat\alpha_D\)</span>.</li>
+</ul>
+<p>Finally, Double LASSO uses the selected controls from both first-stage fits and performs the post-selection OLS step for inference.</p>
+</div>
+</div>
+<p>Overall, the Monte Carlo design is intentionally transparent and modular. Each component — sample size, dimensionality, sparsity, correlation structure, tail behavior, and penalty choice — can be varied independently, while the evaluation metrics remain fixed. This structure facilitates a clear interpretation of the results and allows the simulation evidence to be mapped directly to theoretical insights from the high-dimensional inference literature.</p>
+</section>
+</section>
+<section id="evaluation-metrics-and-implementation" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="evaluation-metrics-and-implementation"><span class="header-section-number">3.5</span> Evaluation Metrics and Implementation</h2>
+<p>Our evaluation focuses on measures that directly reflect the quality of statistical inference rather than point estimation alone. The primary outcome is the coverage probability of confidence intervals for the treatment effect, which indicates how often the interval contains the true parameter across repeated samples. Coverage close to the nominal level signals reliable inference, while systematic under- or over-coverage reveals finite-sample distortions. Alongside coverage, we report the average confidence-interval length, which captures the precision of inference and helps distinguish between procedures that are merely conservative and those that are both valid and informative. As secondary diagnostics, we also consider bias and root mean squared error (RMSE) of the point estimator. These measures are not the main object of interest, but they provide useful context for interpreting coverage and interval length by clarifying whether failures arise from bias, excess variance, or both.</p>
+<p>All metrics are computed within a standard Monte Carlo framework. For each design scenario, we generate repeated independent samples and re-estimate the model from scratch in every replication, including variable selection, orthogonalization, and inference. Confidence intervals are constructed at a fixed nominal level using heteroskedasticity-robust standard errors. To ensure comparability, all estimators and penalty choices are evaluated on the same Monte Carlo draws within a given scenario. Results are then summarized by averaging performance measures across replications, which provides a transparent empirical analogue to repeated-sampling reasoning in asymptotic theory.</p>
+<p>The simulations are implemented in a fully reproducible and modular computational setup. Covariates are standardized prior to regularization to ensure that penalties are applied on a common scale. LASSO penalties are chosen either by theoretically motivated plug-in rules or by cross-validation, depending on the specification under study. Random seeds are fixed at the scenario level to guarantee exact replication, and the codebase separates data generation, estimation, and evaluation into distinct components, allowing individual elements of the design to be modified without affecting the overall structure.</p>
+</section>
+</section>
+<section id="simulation-results" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Simulation Results</h1>
+<section id="coverage-probability" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="coverage-probability"><span class="header-section-number">4.1</span> Coverage Probability</h2>
+<p>We begin by examining the empirical coverage probabilities of confidence intervals for the treatment effect across the full set of simulation scenarios. Figure 1 reports coverage rates relative to the nominal level for Double LASSO under alternative data generating processes and penalty choices.</p>
+<p><img src="plots/coverage_by_scenario.png" class="img-fluid" style="width:80.0%" data-fig-cap="Coverage by Scenario"></p>
+<p>Figure 1: Сoverage probabilities of confidence intervals across simulation scenarios.</p>
+<p>The results reveal a clear and robust ranking across designs. Coverage is lowest under the static DGP, substantially higher under the heavy-tailed DGP, and highest under the static–easier design. This ordering holds across most sample sizes, correlation levels, and dimensional configurations, and is particularly pronounced when theoretically motivated plug-in penalties are used.</p>
+<p>The poor performance under the static DGP reflects the deliberately demanding structure of this design. In the static specification, the same covariates generate strong confounding in both the treatment and outcome equations, and relevant effects are tightly concentrated. As a result, variable selection becomes fragile in finite samples: small errors in selecting nuisance covariates translate into substantial bias in the post-selection estimator, leading to severe under-coverage. This effect is especially visible in low-correlation and smaller-sample scenarios, where coverage can fall far below nominal levels even when plug-in penalties are employed.</p>
+<p>By contrast, the heavy-tailed DGP consistently achieves higher coverage than the static design. This finding may appear counterintuitive at first, given that heavy-tailed covariates and disturbances violate the sub-Gaussian assumptions commonly used in the theoretical analysis of <span class="math inline">\(\ell_1\)</span>-regularized methods. However, inspection of the DGP structure clarifies the mechanism. In the heavy-tailed design, confounding remains present but is less tightly aligned across equations, and the effective sparsity structure is easier to recover despite the presence of extreme observations. Moreover, heavy-tailed noise increases variability in the first-stage estimators, which in turn leads to more conservative confidence intervals after orthogonalization. The resulting increase in interval length partially offsets finite-sample bias, yielding improved empirical coverage relative to the static design. Importantly, this improvement reflects reduced confounding severity rather than superior estimation accuracy.</p>
+<p><img src="plots/coverage_vs_rho.png" class="img-fluid" style="width:80.0%" data-fig-cap="Coverage with Correlation"></p>
+<p>Figure 2: Coverage of Double LASSO confidence intervals versus covariate correlation <span class="math inline">\(\rho\)</span>.</p>
+<p>The static–easier DGP delivers the most favorable performance overall. In this design, confounding is weaker and the relevant covariates enter more cleanly, making approximate sparsity easier to exploit. As a consequence, Double LASSO with plug-in penalties achieves coverage rates close to the nominal level across nearly all scenarios. This behavior closely matches the conditions under which asymptotic validity is established and serves as a benchmark illustrating the method’s intended operating environment. Even when cross-validated penalties are used, coverage remains substantially better than in the static design, underscoring the benefits of approximate sparsity for reliable inference.</p>
+<p>Penalty choice plays a central role across all designs. Cross-validated penalties systematically underperform relative to plug-in penalties, particularly under the static DGP. Cross-validation tends to select smaller penalties, leading to more aggressive variable selection and insufficient bias control in the post-selection regression. Even in the heavy-tailed and static–easier designs, cross-validated Double LASSO exhibits persistent under-coverage, underscoring the importance of conservative tuning for reliable inference.</p>
+<p>Taken together, the coverage results indicate that the primary driver of under-coverage in finite samples is confounding structure rather than tail behavior. Although heavy-tailed distributions complicate estimation, they do not represent the most hostile environment for Double LASSO in this study. Instead, designs with strong, tightly aligned confounding—such as the static DGP — pose the greatest challenge for valid inference. These findings complement existing asymptotic theory by highlighting how design features beyond distributional tails shape the finite-sample reliability of Double LASSO confidence intervals (Chernozhukov, Chetverikov, &amp; Kato, 2017).</p>
+</section>
+<section id="confidence-interval-length" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="confidence-interval-length"><span class="header-section-number">4.2</span> Confidence Interval Length</h2>
+<p>In addition to coverage probabilities, we examine the average length of confidence intervals as a measure of inferential precision. We know that coverage assesses whether intervals contain the true parameter, whereas interval length captures how informative those intervals are in finite samples. Figure 3 reports average confidence-interval lengths across scenarios, data-generating processes, and penalty choices.</p>
+<p><img src="plots/ci_length_by_scenario.png" class="img-fluid" style="width:80.0%" data-fig-cap="Confidence Interval Length across Scenarios"></p>
+<p>Figure 3: Average confidence-interval length of Double LASSO across simulation scenarios.</p>
+<p>Several patterns emerge clearly. First, confidence intervals are systematically shorter under plug-in penalties than under cross-validated penalties across all designs. This mirrors the coverage results: cross-validation selects smaller penalties, which tend to amplify estimation noise in the orthogonalized score and translate into wider confidence intervals. Plug-in penalties, by contrast, yield more stable first-stage fits and tighter inference, particularly in designs that align well with approximate sparsity. This difference is most pronounced in the heavy-tailed and static designs, where cross-validated intervals are uniformly the widest.</p>
+<p>Second, interval length varies meaningfully across data generating processes. The static–easier DGP consistently produces the shortest confidence intervals, reflecting the relative ease of variable selection and weaker confounding in this design. The static DGP yields moderately longer intervals, while the heavy-tailed DGP produces the widest intervals overall, especially when cross-validated penalties are used. This ordering is intuitive: heavy-tailed covariates and disturbances increase variability in both the selection and estimation stages, leading to more conservative inference even when coverage improves.</p>
+<p>The dependence of interval length on sample size and dimensionality further reinforces these conclusions. As shown in Figures A.3 and A.4, confidence intervals shrink monotonically as the sample size increases, consistent with asymptotic theory. Similarly, holding the sample size fixed, intervals become shorter as the effective dimensional complexity of the design decreases. These patterns hold uniformly across DGPs and penalty choices, indicating that the main determinants of interval length are sample size and estimator variability rather than scenario-specific features of individual scenarios.</p>
+<p><img src="plots/ci_length_vs_rho.png" class="img-fluid" style="width:80.0%" data-fig-cap="Confidence Interval Length vs Correlation"></p>
+<p>Figure 4: Average confidence-interval length as a function of covariate correlation <span class="math inline">\(\rho\)</span>.</p>
+<p>Finally, Figure 4 illustrates the relationship between interval length and covariate correlation. For plug-in penalties, interval length increases slightly with correlation, reflecting the interaction between multicollinearity and regularization strength. For cross-validated penalties, intervals are both wider and less sensitive to correlation, suggesting that aggressive tuning dominates the effect of the design matrix. Importantly, the ranking across DGPs remains stable: heavy-tailed designs produce the longest intervals, followed by the static DGP, with the static–easier design remaining the most efficient.</p>
+<p>Overall, the confidence interval length results help explain the observed coverage patterns. Higher coverage, particularly under the heavy-tailed DGP, is primarily achieved through wider, more conservative intervals. By contrast, the static–easier design combines near-nominal coverage with shorter intervals, suggesting that confounding structure and approximate sparsity, rather than tail behavior, are the main determinants of inferential efficiency. These patterns align with standard bias–variance trade-offs in high-dimensional regularized estimation.</p>
+</section>
+<section id="design-complexity-covariate-correlation-and-heavy-tails" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="design-complexity-covariate-correlation-and-heavy-tails"><span class="header-section-number">4.3</span> Design Complexity: Covariate Correlation and Heavy Tails</h2>
+<p>We now examine how two central dimensions of design complexity covariate correlation and tail behavior—jointly shape the finite sample performance of Double LASSO inference. Although often discussed separately in the literature, these features affect Double LASSO through closely related channels, namely the stability of variable selection and the variability of the orthogonalized score. Considering them together provides a clearer picture of when confidence intervals remain reliable and when they become conservative or distorted.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Interpretation of Coverage Patterns">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Interpretation of Coverage Patterns
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the heavy-tailed designs, the higher empirical coverage is largely driven by <strong>longer confidence intervals</strong>, rather than by a systematic improvement in point-estimator accuracy.</p>
+</div>
+</div>
+<p>Increasing covariate correlation systematically improves coverage across all data generating processes. As correlation rises, the effective dimensional complexity of the design is reduced, making it easier for <span class="math inline">\(\ell_1\)</span>-regularized first stage regressions to recover relevant controls. This effect is particularly visible under plug-in penalties, where coverage moves steadily toward the nominal level as correlation increases. The improvement holds for static, static–easier, and heavy-tailed designs alike, indicating that correlation primarily mitigates selection error rather than interacting strongly with distributional assumptions. In this sense, correlation acts as a stabilizing force in high-dimensional inference, counteracting the instability induced by strong confounding or limited sample size. We emphasize, however, that the effect of correlation on high-dimensional inference is highly design-dependent, and correlation need not be beneficial in general, as it may violate compatibility or restricted eigenvalue conditions in other settings.</p>
+<p>Heavy-tailed designs, by contrast, introduce an additional aspect of complexity by weakening concentration properties and increasing estimator variability. In the present simulations, however, heavy-tailed covariates and disturbances do not represent the most adverse environment for Double LASSO. Instead, their impact operates mainly through increased dispersion in first-stage estimates, which leads to wider and more conservative confidence intervals. This mechanism explains why coverage under heavy-tailed designs often exceeds that of the static DGP despite the violation of sub-Gaussian assumptions. An increase in coverage reflects interval conservatism rather than improved precision, a point reinforced by the corresponding confidence-interval length results.</p>
+<section id="coveragelength-pairing-heavy-tailed-vs-gaussian-designs" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="coveragelength-pairing-heavy-tailed-vs-gaussian-designs"><span class="header-section-number">4.3.1</span> Coverage–length pairing (heavy-tailed vs Gaussian designs)</h3>
+<p>To clarify the mechanism behind the higher coverage in heavy-tailed environments, we present coverage jointly with the mean confidence-interval length for a representative high-dimensional scenario (<span class="math inline">\(n=320\)</span>, <span class="math inline">\(p=384\)</span>, <span class="math inline">\(\rho=0.5\)</span>).</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Design</th>
+<th>Penalty</th>
+<th style="text-align: right;">Coverage (95%)</th>
+<th style="text-align: right;">Mean CI length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Gaussian (static)</td>
+<td>Plug-in</td>
+<td style="text-align: right;">0.918</td>
+<td style="text-align: right;">0.218</td>
+</tr>
+<tr class="even">
+<td>Gaussian (static)</td>
+<td>CV</td>
+<td style="text-align: right;">0.778</td>
+<td style="text-align: right;">0.223</td>
+</tr>
+<tr class="odd">
+<td>Heavy-tailed</td>
+<td>Plug-in</td>
+<td style="text-align: right;">0.936</td>
+<td style="text-align: right;">0.228</td>
+</tr>
+<tr class="even">
+<td>Heavy-tailed</td>
+<td>CV</td>
+<td style="text-align: right;">0.798</td>
+<td style="text-align: right;">0.238</td>
+</tr>
+</tbody>
+</table>
+<p>The table shows that the higher coverage under heavy tails is accompanied by <strong>systematically longer confidence intervals</strong>, indicating more conservative inference rather than improved point-estimator accuracy.</p>
+<p>The interaction between correlation and heavy tails further clarifies this pattern. As correlation increases, the stabilizing effect of reduced effective dimensionality benefits heavy-tailed designs in much the same way as Gaussian designs. Coverage improves while interval length remains comparatively large, preserving conservative inference. By contrast, the static DGP remains vulnerable at low correlation levels, where strongly aligned confounding dominates both tail behavior and penalty choice. These findings suggest that, in finite samples, the structure of confounding plays a more decisive role than tail behavior in determining the reliability of Double LASSO confidence intervals.</p>
+<p>Overall,the complexity in high-dimensional designs arises not only from non-Gaussianity, but from the interaction between confounding structure, correlation, and regularization. Heavy-tailed data primarily affect the variance side of the bias–variance tradeoff, whereas strong confounding undermines bias control through unstable selection. Double LASSO remains robust when at least one stabilizing force such as moderate correlation or conservative penalty choice is present, a conclusion consistent with theoretical insights on orthogonalized inference in high dimensions.</p>
+</section>
+</section>
+<section id="comparison-with-ordinary-least-squares" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="comparison-with-ordinary-least-squares"><span class="header-section-number">4.4</span> Comparison with Ordinary Least Squares</h2>
+<p>Although our primary focus is on inference after variable selection, it is informative to benchmark the performance of Double LASSO against ordinary least squares (OLS), which remains the default estimator in many empirical applications. This comparison is particularly revealing in high-dimensional settings where the number of covariates is comparable to, or exceeds, the sample size.</p>
+<p>Across nearly all scenarios considered, Double LASSO delivers substantially more stable inference than OLS. In terms of coverage, OLS often exhibits either severe over coverage or pronounced under coverage, depending on the design. In near <span class="math inline">\(p=n\)</span> and fully high-dimensional regimes, OLS confidence intervals become extremely wide, mechanically increasing the coverage but offering little inferential value. By contrast, Double LASSO maintains coverage closer to the nominal level while producing intervals of economically meaningful length. This pattern is especially evident in designs with moderate to high correlation and in scenarios with many nuisance covariates, where OLS struggles to distinguish signal from noise.</p>
+<p><img src="cplots/coverage.png" class="img-fluid" style="width:80.0%"></p>
+<p>Figure 5: Coverage probabilities of Double LASSO and OLS across simulation scenarios.</p>
+<p>The comparison is even sharper when considering precision. OLS confidence intervals expand dramatically as dimensionality increases, reflecting both multicollinearity and the instability of variance estimation in over-parameterized models. Double LASSO avoids this explosion by partialling out high-dimensional nuisance components before estimation, resulting in markedly shorter intervals across all scenarios. The distributional plots of the treatment effect estimator further reinforce this point: Double LASSO estimates are closely concentrated around the true parameter, whereas OLS estimates display substantial dispersion and, in some designs, noticeable bias.</p>
+<p>Finally, error-based metrics such as RMSE and bias consistently favor Double LASSO in high-dimensional designs. While OLS performs well in classical low-dimensional settings, its performance declines rapidly once the dimensionality approaches the sample size. Double LASSO, in contrast, remains robust across a wide range of designs, confirming its suitability for modern econometric applications with many potential controls.</p>
+<p><img src="cplots/ci_length_mean.png" class="img-fluid" style="width:80.0%"></p>
+<p>Figure 6: Average confidence-interval length of Double LASSO and OLS across simulation scenarios.</p>
+<p>Overall, the results suggest that OLS provides a useful benchmark but fails to deliver reliable inference in high-dimensional settings. The advantages of Double LASSO arise not from improvements in point estimation alone, but from its ability to deliver valid and interpretable inference under approximate sparsity.</p>
+</section>
+</section>
+<section id="discussion-and-conclusion" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Discussion and Conclusion</h1>
+<p>This paper examines the finite sample confidence-interval performance of the Double LASSO estimator in high-dimensional linear models, with particular attention to coverage accuracy and interval length under realistic design complexity. The simulation results provide a coherent assessment of the finite-sample behavior of Double LASSO under forms of complexity that are common in modern econometric applications. Across a wide range of designs, the method delivers confidence intervals with markedly improved coverage relative to naive alternatives, while maintaining reasonable inferential precision even when the dimensionality of the control set is large. These results are consistent with the theoretical properties established in the Double LASSO literature, which emphasize uniform inferential validity under approximate sparsity rather than optimal performance in a single, idealized design.</p>
+<p>One striking pattern that emerges is the sensitivity of coverage to the structure of the data generating process. In the static Gaussian design, particularly when covariates are weakly correlated, Double LASSO tends to under-cover in finite samples. This behavior can be traced back to imperfect variable selection in settings where relevant controls have small coefficients and are difficult to distinguish from noise. In contrast, both the static–easier and heavy-tailed designs yield markedly improved coverage. In these settings, either stronger signal strength or increased variability in covariates and errors appears to facilitate the selection of relevant controls, thereby improving the quality of the orthogonalized estimating equation. This observation highlights an important practical point: worse-behaved data in a distributional sense do not necessarily imply worse inferential performance when the estimation strategy is designed to exploit sparsity and orthogonality.</p>
+<p>The role of covariate correlation further refines this picture. Moderate correlation among controls consistently improves coverage, a result that may appear counterintuitive at first glance. In high-dimensional sparse models, correlation can effectively reduce the dimensionality of the problem by clustering information across covariates, making it easier for LASSO-based procedures to identify the relevant subspace. Our findings are consistent with earlier simulation evidence showing that inference procedures based on orthogonal scores can benefit from correlated designs, provided that the sparsity structure is preserved. At the same time, higher correlation slightly increases confidence interval length, reflecting a natural bias–variance tradeoff rather than a failure of the method.</p>
+<p>Penalty choice also plays a central role in finite sample performance. Across almost all scenarios, plug-in penalties dominate cross-validated penalties in terms of coverage, albeit at the cost of slightly longer confidence intervals in some designs. This pattern is consistent with the well known tendency of cross-validation to choose penalties smaller than theoretically motivated penalty levels when the objective is prediction rather than inference. In the context of Double LASSO, this insufficient regularization can translate into omitted variables in the selection step, undermining the orthogonality that underpins valid inference. Our results therefore reinforce the practical recommendation to favor theoretically calibrated penalties when the primary goal is inference rather than prediction.</p>
+<p>The comparison with OLS further clarifies the scope of these conclusions. While OLS performs well in classical low-dimensional settings, its behavior declines rapidly as the number of covariates approaches the sample size. In such regimes, OLS confidence intervals either explode in length or become unreliable due to unstable variance estimation. Double LASSO avoids these failures by explicitly accounting for high-dimensional nuisance components, thereby delivering inference that remains interpretable even when traditional methods break down. Importantly, the gains from Double LASSO are not superficial; they reflect a fundamental shift from conditioning on a fixed, potentially misspecified model to constructing inference that is robust to selection mistakes.</p>
+<p>At the same time, important limitations remain. Double LASSO relies on approximate sparsity and on the absence of severe model misspecification. In finite samples, weak signals and low correlation among covariates can still lead to under coverage, and the method does not explicitly account for uncertainty about the selected model.</p>
+<p>These limitations point naturally to several directions for future research. One promising area of research is the integration of Double LASSO with sparsified simultaneous confidence interval methods, which aim to incorporate model uncertainty directly into inferential statements. Another is the extension to settings with unobserved confounding, where doubly debiased or spectrally adjusted procedures have shown encouraging theoretical properties. Finally, adapting high-dimensional inferential methods to time-series and panel data remains an open and practically important challenge, particularly for applications in macroeconomics and finance. Also, valid inference in high-dimensional environments requires methods that are explicitly designed for that purpose. Double LASSO represents a significant step in this direction, and continued methodological development will be essential as empirical datasets grow ever richer and more complex.</p>
+<p>Overall, the results highlight both the capabilities and the limitations of Double LASSO in finite samples. While the method is well suited to high-dimensional settings characterized by approximate sparsity, it is not uniformly reliable across all designs: under-coverage may occur when signals are weak and covariate correlation is low, and performance remains sensitive to the choice of penalty parameters. At the same time, in environments that broadly conform to the conditions under which Double LASSO is theoretically justified, the procedure achieves a favorable balance between robustness and inferential precision. From an applied perspective, these findings emphasize the importance of careful design considerations—particularly signal strength, correlation structure, and penalty calibration — when using Double LASSO for inference in high-dimensional linear models.</p>
+</section>
+<section id="references" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> References</h1>
+<p>Belloni, A., Chernozhukov, V., &amp; Hansen, C. (2014). Inference on treatment effects after selection among high-dimensional controls. The Review of Economic Studies, 81(2), 608–650.</p>
+<p>Chernozhukov, V., Chetverikov, D., &amp; Kato, K. (2017). Central limit theorems and bootstrap in high dimensions. The Annals of Probability, 45(4), 2309–2352.</p>
+<p>Chernozhukov, V., Hansen, C., &amp; Spindler, M. (2018). Valid post-selection and post-regularization inference: An elementary, general approach. The Econometrics Journal, 21(1), C1–C33.</p>
+<p>Leeb, H., &amp; Pötscher, B. M. (2005). Model selection and inference: Facts and fiction. Econometric Theory, 21(1), 21–59.</p>
+<p>Neyman, J. (1959). Optimal asymptotic tests of composite hypotheses. In Proceedings of the Berkeley Symposium on Mathematical Statistics and Probability (Vol. 3, pp.&nbsp;213–234). University of California Press.</p>
+<p>White, H. (1980). A heteroskedasticity-consistent covariance matrix estimator and a direct test for heteroskedasticity. Econometrica, 48(4), 817–838.</p>
+<p>Davidson, R., &amp; MacKinnon, J. G. (2004). Econometric theory and methods. Oxford University Press.</p>
+<p>Gentzkow, M., &amp; Shapiro, J. M. (2014). Code and data for the social sciences: A practitioner’s guide. University of Chicago Working Paper.</p>
+<p>Pedregosa, F., et al.&nbsp;(2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830.</p>
+<p>Virtanen, P., et al.&nbsp;(2020). SciPy 1.0: Fundamental algorithms for scientific computing in Python. Nature Methods, 17(3), 261–272.</p>
+<p>Guo, Z., Ćevid, D., &amp; Bühlmann, P. (2020). Doubly debiased LASSO: High-dimensional inference under hidden confounding. The Annals of Statistics, 48(6), 3560–3584.</p>
+<p>Ouyang, J., Tan, K. M., &amp; Xu, G. (2023). High-dimensional inference for generalized linear models with hidden confounding. Journal of the American Statistical Association.</p>
+<p>Zhu, X., Qin, Y., &amp; Wang, P. (2023). Sparsified simultaneous confidence intervals for high-dimensional linear models. Journal of Econometrics.</p>
+<p>Zhu, Y., Yu, Z., &amp; Cheng, G. (2019). High-dimensional inference in partially linear models. The Annals of Statistics, 47(6), 3322–3354.</p>
+</section>
+<section id="appendix" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Appendix</h1>
+<p><img src="plots/coverage_vs_n.png" class="img-fluid" style="width:80.0%" data-fig-cap="Coverage vs Sample Size"></p>
+<p><strong>Figure A.1:</strong> Coverage as a Function of Sample Size (<span class="math inline">\(\rho = 0.2\)</span>)</p>
+<p>Coverage improves as the sample size increases, particularly under plug-in penalties. Plug-in penalties move closer to the nominal level, while cross-validation remains below it in most cases. The figure shows that small samples make inference more fragile, especially in the static design.</p>
+<p><img src="plots/coverage_vs_p.png" class="img-fluid" style="width:80.0%" data-fig-cap="Coverage vs Dimensionality"></p>
+<p><strong>Figure A.2:</strong> Coverage as a Function of Dimensionality (<span class="math inline">\(\rho = 0.2\)</span>)</p>
+<p>Coverage changes as the number of covariates increases. Plug-in penalties tend to perform better, staying closer to the nominal level, while cross-validation under-covers across dimensions. This highlights how tuning choices affect inference when the model becomes more complex.</p>
+<p><img src="plots/ci_length_vs_n.png" class="img-fluid" style="width:80.0%" data-fig-cap="Confidence Interval Length vs Sample Size"></p>
+<p><strong>Figure A.3:</strong> Confidence Interval Length vs Sample Size</p>
+<p>Confidence intervals become shorter as the sample size grows. Cross-validated penalties produce longer intervals than plug-in penalties. Larger samples lead to more stable estimates and therefore narrower intervals.</p>
+<p><img src="plots/ci_length_vs_p.png" class="img-fluid" style="width:80.0%" data-fig-cap="Confidence Interval Length vs Dimensionality"></p>
+<p><strong>Figure A.4:</strong> Average Confidence Interval Length as a Function of Dimensionality (<span class="math inline">\(\rho = 0.2\)</span>)</p>
+<p>Confidence interval length declines as dimensional complexity decreases, holding correlation fixed. Plug-in penalties generally produce shorter intervals than cross-validated penalties. The reduction in length is more pronounced under approximate sparsity, indicating improved precision as effective dimensionality falls.</p>
+<p><img src="plots/bias_by_scenario.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.5:</strong> Bias Across Simulation Scenarios</p>
+<p>Bias varies across scenarios and is highest under the static design with low correlation. Double LASSO exhibits substantially smaller bias than OLS in high-dimensional regimes. The results indicate that selection-induced bias remains a central driver of under-coverage in challenging designs.</p>
+<p><img src="plots/n_selected_outcome_controls_line.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.6:</strong> Number of Selected Controls in the Outcome Model Across Scenarios</p>
+<p>The number of selected controls in the outcome equation increases with dimensionality and correlation. Cross-validation tends to select larger models than plug-in penalties. This pattern reflects weaker regularization under prediction-oriented tuning.</p>
+<p><img src="plots/n_selected_treatment_controls_line.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.7:</strong> Number of Selected Controls in the Treatment Model Across Scenarios</p>
+<p>The number of selected controls varies across designs and penalty choices. Cross-validation typically selects more variables than plug-in penalties. This suggests that prediction-oriented tuning tends to keep larger models.</p>
+<p><img src="plots/rmse_by_scenario.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.8:</strong> RMSE Across Simulation Scenarios</p>
+<p>RMSE differs noticeably across designs. Double LASSO generally has lower RMSE than OLS in high-dimensional settings, while the difference is small in low-dimensional cases. Overall, the results confirm that OLS becomes unstable as dimensionality increases.</p>
+<p><img src="plots/summary_overall.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.9:</strong> Summary of Average Performance Measures Across Scenarios</p>
+<p>This figure summarizes coverage, bias, RMSE, interval length, and model size. Plug-in Double LASSO achieves coverage close to nominal levels with moderate interval length and relatively small bias. Cross-validation tends to select larger models and produce longer intervals without clear gains in accuracy.</p>
+<p><img src="plots/treatment_effect_hat_distribution_n_320_p_384_corr_0_5.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.10:</strong> Sampling Distribution of the Treatment Effect Estimator (<span class="math inline">\(n = 320\)</span>, <span class="math inline">\(p = 384\)</span>, <span class="math inline">\(\rho = 0.5\)</span>)</p>
+<p>The distribution of Double LASSO estimates is centered close to the true value and relatively concentrated. OLS shows greater spread and visible bias. The difference in shape helps explain why Double LASSO delivers more reliable inference in high-dimensional settings.</p>
+<p><img src="plots/zscore_distribution_n_320_p_384_corr_0_5.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.11:</strong> Distribution of the Z-Score for the Treatment Effect Estimator (<span class="math inline">\(n = 320\)</span>, <span class="math inline">\(p = 384\)</span>, <span class="math inline">\(\rho = 0.5\)</span>)</p>
+<p>The standardized errors are more tightly centered around zero under plug-in penalties. Cross-validation produces heavier tails, reflecting more variability. Deviations from symmetry are stronger under heavy-tailed designs, which affects coverage performance.</p>
+<p><img src="cplots/bias.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.12:</strong> Bias Comparison Between Double LASSO and OLS Across Scenarios</p>
+<p>Bias is substantially larger for OLS in high-dimensional scenarios. Double LASSO remains more stable across designs. The gap is especially clear when the number of covariates approaches the sample size.</p>
+<p><img src="cplots/rmse.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.13:</strong> RMSE Comparison Between Double LASSO and OLS Across Scenarios</p>
+<p>OLS shows a sharp increase in RMSE as dimensionality rises. Double LASSO maintains lower and more stable error across most scenarios. In low-dimensional settings, the difference between the two methods becomes small.</p>
+<p><img src="cplots/treatment_effect_hat_distribution_p_equals_n.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.14:</strong> Sampling Distribution of the Treatment Effect Estimator in the <span class="math inline">\(p = n\)</span> Design</p>
+<p>When the number of covariates equals the sample size, OLS becomes highly unstable. Double LASSO remains centered near the true value and shows less dispersion. This illustrates how classical methods break down at the boundary of feasibility.</p>
+<p><img src="cplots/treatment_effect_hat_distribution_n_320_p_384_corr_0_5.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.15:</strong> Sampling Distribution of the Treatment Effect Estimator (<span class="math inline">\(n = 320\)</span>, <span class="math inline">\(p = 384\)</span>, <span class="math inline">\(\rho = 0.5\)</span>)</p>
+<p>In this high-dimensional correlated design, Double LASSO estimates are tightly concentrated around the true effect. OLS displays both greater spread and noticeable bias. The difference explains the better coverage and RMSE performance of Double LASSO in this setting.</p>
+<p><img src="cplots/treatment_effect_hat_distribution_classical_low_dim.png" class="img-fluid" style="width:80.0%"></p>
+<p><strong>Figure A.16:</strong> Sampling Distribution of the Treatment Effect Estimator in the Classical Low-Dimensional Design</p>
+<p>In the low-dimensional benchmark, both methods perform similarly. The distributions are centered and show comparable dispersion. This confirms that differences between the methods arise mainly in high-dimensional environments.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

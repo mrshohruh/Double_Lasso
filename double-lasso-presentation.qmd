@@ -1,0 +1,154 @@
+---
+title: "RM in Econometrics and Statistics"
+subtitle: "Evaluating the Confidence-Interval Performance of the Double LASSO Estimator in High-Dimensional Linear Models"
+author: "Shokhrukhkhon Nishonkulov, Olimjon Umurzokov, Damir Abdulazizov"
+format:
+  revealjs:
+    slide-number: true
+    incremental: true
+    theme: default
+    transition: fade
+    center: true
+    css: slides.css
+---
+
+## Introduction and Motivation
+- High-dimensional regression: many controls, $p$ comparable to or larger than $n$
+- OLS inference breaks down: overfitting, multicollinearity, omitted-variable bias
+- Double LASSO: variable selection + valid post-selection inference
+- Key ideas: sparsity and Neyman-orthogonality for reliable CIs
+- Monte Carlo evaluation: coverage and CI length under multiple DGPs
+
+
+## Double LASSO: Model and Estimation Procedure
+
+We consider the high-dimensional linear model:
+$$
+Y = \alpha D + X \beta + \varepsilon
+$$
+
+## Step 1: LASSO for Outcome Equation
+$$
+Y = X \beta + u
+$$
+
+Selected controls from outcome:
+$$
+\hat{S}_Y = \{ j : \hat{\beta}_j \neq 0 \}
+$$
+
+## Step 2: LASSO for Treatment Equation
+$$
+D = X \gamma + v
+$$
+
+Selected controls from treatment:
+$$
+\hat{S}_D = \{ j : \hat{\gamma}_j \neq 0 \}
+$$
+
+## Step 3: Post-Selection OLS (Union of Controls)
+
+Union of selected controls:
+$$
+\hat{S} = \hat{S}_Y \cup \hat{S}_D
+$$
+
+Post-selection OLS:
+$$
+Y = \alpha D + X_{\hat{S}} \delta + \varepsilon
+$$
+
+Double LASSO estimator:
+$$
+\hat{\alpha}_{DL}
+$$
+
+## Why Partialling-Out Works: Neyman Orthogonality
+
+Define residuals:
+$$
+u = Y - X \beta,\quad v = D - X \gamma
+$$
+
+Orthogonal score (moment condition):
+$$
+\psi(X; \alpha, \eta) = (Y - \alpha D - X \beta)(D - X \gamma),\quad \eta=(\beta,\gamma)
+$$
+
+## Neyman orthogonality:
+$$
+\left.\frac{\partial}{\partial \eta} \mathbb{E}\left[\psi(X; \alpha_0, \eta)\right]\right|_{\eta=\eta_0} = 0
+$$
+
+Implication:
+$$
+\mathbb{E}[u v]=0,\quad \hat{\alpha} \text{ is insensitive to small errors in } \hat{\beta},\hat{\gamma}
+$$
+
+## Simulation Design
+
+- Sample size: $n \in \{200, 320\}$ with low-dim checks
+- Number of covariates: $p \in \{20, 180, 200, 240, 384\}$
+- Sparsity: $s=5$ relevant controls 
+- True treatment effect: $\alpha=2.0$
+- Correlation in $X$: equicorrelated $\rho \in \{0.0, 0.2, 0.5\}$
+
+
+## DGP Variants
+
+- static: Gaussian $X$ with optional equicorrelation, signal from first $s$ covariates
+- static\_easier: Gaussian $X$ with coefficient decay $b_j \propto 1/j^2$ (approximate sparsity)
+- heavy\_tail: Student-$t_3$ covariates and noise; sparse coefficients $b_j \propto 1/\sqrt{j}$
+- Outcome/treatment form: $D=\gamma_D\,\text{signal}+v$, $Y=\alpha D+\gamma_Y\,\text{signal}+u$
+
+## Estimator: Double LASSO (Plug-in vs CV Alpha)
+
+- Two LASSO steps: outcome on $X$, treatment on $X$; use residuals in final OLS
+- Plug-in alpha: $\alpha = c\,\hat{\sigma}\sqrt{2\log(2p/a)/n}$ (Chernozhukov et al.)
+- CV alpha: 10-fold LassoCV, select $\alpha$ separately for outcome and treatment
+- Same final step: OLS of residualized $Y$ on residualized $D$ with HC3 SEs
+
+## Results
+
+## Coverage
+
+![](cplots/coverage.png){width=100% .r-stretch}
+
+## Average CI Length
+
+![](cplots/ci_length_mean.png){width=100% .r-stretch}
+
+## RMSE
+
+![](cplots/rmse.png){width=100% .r-stretch}
+
+## Treatment Effect Distribution (n=320, p=384, $\rho=0.5$)
+
+![](cplots/treatment_effect_hat_distribution_n_320_p_384_corr_0_5.png){width=100% .r-stretch}
+
+## Coverage Probability
+
+![](plots/coverage_by_scenario.png){width=100% .r-stretch}
+
+## Average Confidence-Interval Length
+
+![](plots/ci_length_by_scenario.png){width=100% .r-stretch}
+
+## RMSE
+
+![](plots/rmse_by_scenario.png){width=100% .r-stretch}
+
+## Treatment Effect Distribution (n=320, p=384, $\rho=0.5$)
+
+![](plots/treatment_effect_hat_distribution_n_320_p_384_corr_0_5.png){width=100% .r-stretch}
+
+## Conclusions
+
+- Double LASSO delivers valid inference in high-dimensional settings where OLS breaks down.
+- It achieves better coverage and lower RMSE with moderate CI lengths, reflecting a strong bias–variance–coverage trade-off.
+- Penalty choice matters: plug-in α is more efficient, while cross-validated α is more robust.
+
+## Thank you for your attention
+
+Questions?

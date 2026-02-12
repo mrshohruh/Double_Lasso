@@ -1,0 +1,11 @@
+.reveal .slides section {
+  overflow: visible;
+}
+
+.reveal .slides section img {
+  max-width: none;
+  max-height: none;
+  transform: scale(1.3);
+  transform-origin: center;
+  margin-top: 11vh;
+}
